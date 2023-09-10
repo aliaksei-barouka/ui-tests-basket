@@ -2,7 +2,13 @@
   "name": "untitled",
   "version": "1.0.0",
   "devDependencies": {
-    "@playwright/test": "^1.37.1"
+    "@playwright/test": "^1.37.1",
+    "allure-playwright": "^2.7.0",
+    "mkdirp": "^3.0.1",
+    "rimraf": "^5.0.1"
   },
-  "scripts": {}
+  "scripts": {
+    "test": "rimraf allure-results && mkdirp allure-results && npx playwright test --reporter=line,allure-playwright",
+    "allure": "allure generate allure-results --clean && allure open allure-report"
+  }
 }

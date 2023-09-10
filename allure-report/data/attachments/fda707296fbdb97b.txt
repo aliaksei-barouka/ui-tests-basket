@@ -1,0 +1,17 @@
+Basket is empty
+Special condition is triggered
+[
+  Locator@//span[@class='product_discount']//ancestor::div[@class='note-item card h-100 hasDiscount'] >> nth=0,
+  Locator@//span[@class='product_discount']//ancestor::div[@class='note-item card h-100 hasDiscount'] >> nth=1,
+  Locator@//span[@class='product_discount']//ancestor::div[@class='note-item card h-100 hasDiscount'] >> nth=2
+]
+button is pressed
+undefined
+Clicked on product 1
+Clicked on product 2
+Clicked on product 3
+Clicked on product 4
+Clicked on product 5
+Clicked on product 6
+Clicked on product 7
+Clicked on product 8
