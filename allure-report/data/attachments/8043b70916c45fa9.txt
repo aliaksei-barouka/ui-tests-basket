@@ -1,0 +1,7 @@
+Basket is cleaned successfully
+[
+  Locator@//span[@class='product_discount']//ancestor::div[@class='note-item card h-100 hasDiscount'] >> nth=0,
+  Locator@//span[@class='product_discount']//ancestor::div[@class='note-item card h-100 hasDiscount'] >> nth=1,
+  Locator@//span[@class='product_discount']//ancestor::div[@class='note-item card h-100 hasDiscount'] >> nth=2
+]
+0 interation(s)

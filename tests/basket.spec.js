@@ -1,3 +1,5 @@
+import { allure } from "allure-playwright";
+
 const { test, expect, chromium} = require('@playwright/test');
 
 test.describe('basket testing', () => {
