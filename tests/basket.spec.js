@@ -1,6 +1,5 @@
-import { allure } from "allure-playwright";
-
 const { test, expect, chromium} = require('@playwright/test');
+const { allure } = require('allure-playwright');
 
 test.describe('basket testing', () => {
     let browser;
@@ -27,7 +26,7 @@ test.describe('basket testing', () => {
         }
 
         if (testInfo.title  ==='Add all items to basket and open it') {
-            console.log("Special condition is triggered")
+            console.log("Special condition is triggered");
             //Add item with discount to basket
             const productsWithDiscount = await page.locator("//span[@class='product_discount']//ancestor::div[@class='note-item card h-100 hasDiscount']");
             console.log(await productsWithDiscount.all());
@@ -37,27 +36,34 @@ test.describe('basket testing', () => {
             }
         }
     });
-    test.afterEach(async () => {
-         await browser.close();
+    test.afterEach(async ({}, testInfo) => {
+        // if (testInfo.error) {
+        //     const screenshot = await page.screenshot();
+        //     await allure.attachment('Error Screenshot', screenshot, 'image/png');
+        // }
+        await browser.close();
      });
     test('Check basket is opened', async () => {
-        //  Check dropdown is opened
-        await page.locator("//a[@id='dropdownBasket']").click();
-        const dropdownBasketIsOpened = page.locator("//div[@aria-labelledby='dropdownBasket']")
-
-        await expect(dropdownBasketIsOpened).toHaveClass('dropdown-menu dropdown-menu-right show');
-        //  Check basket is opened
-        await page.locator("//a[@class='btn btn-primary btn-sm ml-auto']").click();
-        const expectedBasketURL = 'https://enotes.pointschool.ru/basket';
-        await expect(page).toHaveURL(expectedBasketURL);
-        const errorState = await page.locator("//div[@class='site-error']")
-        await expect(errorState).toBeEmpty();
-
+        try {
+            //  Check dropdown is opened
+            await page.locator("//a[@id='dropdownBasket']").click();
+            const dropdownBasketIsOpened = page.locator("//div[@aria-labelledby='dropdownBasket']");
+            await expect(dropdownBasketIsOpened).toHaveClass('dropdown-menu dropdown-menu-right show');
+            //  Check basket is opened
+            await page.locator("//a[@class='btn btn-primary btn-sm ml-auto']").click();
+            const expectedBasketURL = 'https://enotes.pointschool.ru/basket';
+            await expect(page).toHaveURL(expectedBasketURL);
+            const errorState = await page.locator("//div[@class='site-error']");
+            await expect(errorState).toBeEmpty();
+        } catch (error){
+            // const screenshot = await page.screenshot();
+            // await allure.attachment('Error Screenshot', screenshot, 'image/png');
+            throw error;
+        }
     });
     test('Add first item without discount to basket and open it', async () => {
 
-        const productsWithoutDiscount = await page.locator("//span[@class='product_discount']//ancestor::div[@class='note-item card h-100']")
-        console.log((await productsWithoutDiscount.all()).length)
+        const productsWithoutDiscount = await page.locator("//span[@class='product_discount']//ancestor::div[@class='note-item card h-100']");
         if ((await productsWithoutDiscount.all()).length > 0) {
             const buyButtonOfProductWithoutDiscount = await productsWithoutDiscount.locator("//button[@class='actionBuyProduct btn btn-primary mt-3']").nth(0).click();
             const basketCounter = await page.locator("//span[@class='basket-count-items badge badge-primary']").textContent();
@@ -67,30 +73,29 @@ test.describe('basket testing', () => {
             await page.locator("//a[@id='dropdownBasket']").click();
             //Check dropdown items
             const dropDownItems = await page.locator("//li[@class='basket-item list-group-item d-flex justify-content-start align-items-center']");
-            const itemsName = await ((await dropDownItems).locator("//span[@class='basket-item-title']")).textContent()
-            console.log(`Item Name: ${itemsName}`)
-            const itemsPrice = await ((await dropDownItems).locator("//span[@class='basket-item-price']")).textContent()
-            console.log(`Item Price: ${itemsPrice}`)
-            const totalPrice = await page.locator("//span[@class='basket_price']").textContent()
-            console.log(`Total Price: ${totalPrice}`)
+            const itemsName = await ((await dropDownItems).locator("//span[@class='basket-item-title']")).textContent();
+            console.log(`Item Name: ${itemsName}`);
+            const itemsPrice = await ((await dropDownItems).locator("//span[@class='basket-item-price']")).textContent();
+            console.log(`Item Price: ${itemsPrice}`);
+            const totalPrice = await page.locator("//span[@class='basket_price']").textContent();
+            console.log(`Total Price: ${totalPrice}`);
             await expect(itemsName).toBeTruthy()
             && await expect(itemsPrice).toBeTruthy()
             && await expect(totalPrice).toBeTruthy()
-            //  Check trasfer to basket is opened
+            //  Check transfer to basket is opened
             await page.locator("//a[@class='btn btn-primary btn-sm ml-auto']").click();
             const expectedBasketURL = 'https://enotes.pointschool.ru/basket';
             await expect(page).toHaveURL(expectedBasketURL);
-            const errorState = await page.locator("//div[@class='site-error']")
+            const errorState = await page.locator("//div[@class='site-error']");
             await expect(errorState).toBeEmpty();
         }
         else {
-            console.log ('No items without discount were found')
+            console.log ('No items without discount were found');
         }
     });
     test('Add first item with discount to basket and open it', async () => {
 
-        const productsWithDiscount = await page.locator("//span[@class='product_discount']//ancestor::div[@class='note-item card h-100 hasDiscount']")
-        console.log (await productsWithDiscount.all())
+        const productsWithDiscount = await page.locator("//span[@class='product_discount']//ancestor::div[@class='note-item card h-100 hasDiscount']");
         if ((await productsWithDiscount.all()).length > 0) {
             const buyButtonOfProductWithDiscount = await productsWithDiscount.locator("//button[@class='actionBuyProduct btn btn-primary mt-3']").nth(0).click();
             const basketCounter = await page.locator("//span[@class='basket-count-items badge badge-primary']").textContent();
@@ -100,27 +105,27 @@ test.describe('basket testing', () => {
             await page.locator("//a[@id='dropdownBasket']").click();
             //Check dropdown items
             const dropDownItems = await page.locator("//li[@class='basket-item list-group-item d-flex justify-content-start align-items-center']");
-            const itemsName = await ((await dropDownItems).locator("//span[@class='basket-item-title']")).textContent()
-            console.log(`Item Name: ${itemsName}`)
-            const itemsPrice = await ((await dropDownItems).locator("//span[@class='basket-item-price']")).textContent()
-            console.log(`Item Price: ${itemsPrice}`)
-            const totalPrice = await page.locator("//span[@class='basket_price']").textContent()
-            console.log(`Total Price: ${totalPrice}`)
+            const itemsName = await ((await dropDownItems).locator("//span[@class='basket-item-title']")).textContent();
+            console.log(`Item Name: ${itemsName}`);
+            const itemsPrice = await ((await dropDownItems).locator("//span[@class='basket-item-price']")).textContent();
+            console.log(`Item Price: ${itemsPrice}`);
+            const totalPrice = await page.locator("//span[@class='basket_price']").textContent();
+            console.log(`Total Price: ${totalPrice}`);
             await expect(itemsName).toBeTruthy()
             && await expect(itemsPrice).toBeTruthy()
             && await expect(totalPrice).toBeTruthy()
             await page.locator("//a[@class='btn btn-primary btn-sm ml-auto']").click();
             const expectedBasketURL = 'https://enotes.pointschool.ru/basket';
             await expect(page).toHaveURL(expectedBasketURL);
-            const errorState = await page.locator("//div[@class='site-error']")
+            const errorState = await page.locator("//div[@class='site-error']");
             await expect(errorState).toBeEmpty();
         }
         else {
-            console.log ('No items with discount were found')
+            console.log ('No items with discount were found');
         }
     });
     test('Add all items to basket and open it', async () => {
-        const allProducts = await page.locator("//div[@class='col-3 mb-5']")
+        const allProducts = await page.locator("//div[@class='col-3 mb-5']");
         const products = await allProducts.all();
         console.log(allProducts.length);
         for (let i = 0; i < products.length; i++) {
@@ -132,19 +137,16 @@ test.describe('basket testing', () => {
         const basketCounter = await page.locator("//span[@class='basket-count-items badge badge-primary']").textContent();
         await expect(basketCounter).toMatch('9');
         console.log(`${basketCounter} item(s) with discount is located in basket`);
-
-        await page.pause()
-
         // Check basket is opened
         await page.locator("//a[@id='dropdownBasket']").click();
         //Check dropdown items
         const dropDownItems = await page.locator("//li[@class='basket-item list-group-item d-flex justify-content-start align-items-center']");
-        const itemsName = await ((await dropDownItems).locator("//span[@class='basket-item-title']")).textContent()
-        console.log(`Item Name: ${itemsName}`)
-        const itemsPrice = await ((await dropDownItems).locator("//span[@class='basket-item-price']")).textContent()
-        console.log(`Item Price: ${itemsPrice}`)
-        const totalPrice = await page.locator("//span[@class='basket_price']").textContent()
-        console.log(`Total Price: ${totalPrice}`)
+        const itemsName = await ((await dropDownItems).locator("//span[@class='basket-item-title']")).textContent();
+        console.log(`Item Name: ${itemsName}`);
+        const itemsPrice = await ((await dropDownItems).locator("//span[@class='basket-item-price']")).textContent();
+        console.log(`Item Price: ${itemsPrice}`);
+        const totalPrice = await page.locator("//span[@class='basket_price']").textContent();
+        console.log(`Total Price: ${totalPrice}`);
 
         for (let i = 0; i < dropDownItems.length; i++) {
             await expect(itemsName.nth(i)).toBeTruthy() && await expect(itemsPrice.nth(i)).toBeTruthy();
@@ -154,13 +156,13 @@ test.describe('basket testing', () => {
         await page.locator("//a[@class='btn btn-primary btn-sm ml-auto']").click();
         const expectedBasketURL = 'https://enotes.pointschool.ru/basket';
         await expect(page).toHaveURL(expectedBasketURL);
-        const errorState = await page.locator("//div[@class='site-error']")
+        const errorState = await page.locator("//div[@class='site-error']");
         await expect(errorState).toBeEmpty();
     });
     test('Add 9 items with discount to basket and open it', async () => {
 
-        const productsWithDiscount = await page.locator("//span[@class='product_discount']//ancestor::div[@class='note-item card h-100 hasDiscount']")
-        console.log (await productsWithDiscount.all())
+        const productsWithDiscount = await page.locator("//span[@class='product_discount']//ancestor::div[@class='note-item card h-100 hasDiscount']");
+        console.log (await productsWithDiscount.all());
         if ((await productsWithDiscount.all()).length > 0) {
             const buyButtonOfProductWithDiscount = await productsWithDiscount.locator("//button[@class='actionBuyProduct btn btn-primary mt-3']").nth(0);
             for (let i = 0; i<9 ; i++) {
@@ -176,17 +178,17 @@ test.describe('basket testing', () => {
             await page.locator("//a[@id='dropdownBasket']").click();
             //Check dropdown items
             const dropDownItems = await page.locator("//li[@class='basket-item list-group-item d-flex justify-content-start align-items-center']");
-            const itemsName = await ((await dropDownItems).locator("//span[@class='basket-item-title']")).textContent()
-            console.log(`Item Name: ${itemsName}`)
-            const itemsPrice = await ((await dropDownItems).locator("//span[@class='basket-item-price']")).textContent()
-            console.log(`Item Price: ${itemsPrice}`)
-            const totalPrice = await page.locator("//span[@class='basket_price']").textContent()
-            console.log(`Total Price: ${totalPrice}`)
-            await expect(itemsName).toBeTruthy() && await expect(itemsPrice).toBeTruthy() && await expect(totalPrice).toBeTruthy()
+            const itemsName = await ((await dropDownItems).locator("//span[@class='basket-item-title']")).textContent();
+            console.log(`Item Name: ${itemsName}`);
+            const itemsPrice = await ((await dropDownItems).locator("//span[@class='basket-item-price']")).textContent();
+            console.log(`Item Price: ${itemsPrice}`);
+            const totalPrice = await page.locator("//span[@class='basket_price']").textContent();
+            console.log(`Total Price: ${totalPrice}`);
+            await expect(itemsName).toBeTruthy() && await expect(itemsPrice).toBeTruthy() && await expect(totalPrice).toBeTruthy();
             await page.locator("//a[@class='btn btn-primary btn-sm ml-auto']").click();
             const expectedBasketURL = 'https://enotes.pointschool.ru/basket';
             await expect(page).toHaveURL(expectedBasketURL);
-            const errorState = await page.locator("//div[@class='site-error']")
+            const errorState = await page.locator("//div[@class='site-error']");
             await expect(errorState).toBeEmpty();
         }
         else {
