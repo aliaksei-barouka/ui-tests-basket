@@ -1,5 +1,5 @@
 const { test, expect, chromium} = require('@playwright/test');
-const { allure } = require('allure-playwright');
+const {allure} = require('allure-playwright')
 
 test.describe('basket testing', () => {
     let browser;
@@ -7,7 +7,7 @@ test.describe('basket testing', () => {
     let page;
 
     test.beforeEach(async ({},testInfo) => {
-        browser = await chromium.launch({headless: false});
+        browser = await chromium.launch();
         context = await browser.newContext();
         page = await context.newPage();
         //  Login
@@ -37,14 +37,13 @@ test.describe('basket testing', () => {
         }
     });
     test.afterEach(async ({}, testInfo) => {
-        // if (testInfo.error) {
-        //     const screenshot = await page.screenshot();
-        //     await allure.attachment('Error Screenshot', screenshot, 'image/png');
-        // }
+        if (testInfo.status === "failed") {
+            const screenshot = await page.screenshot({ fullPage: true });
+            await allure.attachment('failed_screen', screenshot, 'image/png');
+        }
         await browser.close();
      });
     test('Check basket is opened', async () => {
-        try {
             //  Check dropdown is opened
             await page.locator("//a[@id='dropdownBasket']").click();
             const dropdownBasketIsOpened = page.locator("//div[@aria-labelledby='dropdownBasket']");
@@ -55,11 +54,6 @@ test.describe('basket testing', () => {
             await expect(page).toHaveURL(expectedBasketURL);
             const errorState = await page.locator("//div[@class='site-error']");
             await expect(errorState).toBeEmpty();
-        } catch (error){
-            // const screenshot = await page.screenshot();
-            // await allure.attachment('Error Screenshot', screenshot, 'image/png');
-            throw error;
-        }
     });
     test('Add first item without discount to basket and open it', async () => {
 
