@@ -1,3 +1,5 @@
+const {expect} = require("@playwright/test");
+
 class Basket {
     constructor(page) {
         this.page = page;
@@ -15,11 +17,14 @@ class Basket {
     async openBasketDropdownButton() {
         const basketDropdownElement = this.page.locator(this.basketDropdownButton);
         await basketDropdownElement.click();
+        await expect(basketDropdownElement).toHaveClass('dropdown-menu dropdown-menu-right show');
     }
-    async triggerClearItemsButton(){
+
+    async triggerClearItemsButton() {
         const clearItemsButtonElement = this.page.locator(this.clearItemsButton);
         await clearItemsButtonElement.click();
     }
+
     async checkBasketCounterValue() {
         return await this.page.locator(this.basketCounter).textContent();
     }

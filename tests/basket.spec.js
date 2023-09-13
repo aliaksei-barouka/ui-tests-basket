@@ -150,7 +150,7 @@ test.describe('basket testing', () => {
         const errorState = await page.locator("//div[@class='site-error']");
         await expect(errorState).toBeEmpty();
     });
-    test('Add 9 items with discount to basket and open it', async () => {
+    test('Add 9 same items with discount to basket and open it', async () => {
 
         const productsWithDiscount = await page.locator("//span[@class='product_discount']//ancestor::div[@class='note-item card h-100 hasDiscount']");
         console.log(await productsWithDiscount.all());

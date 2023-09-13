@@ -19,12 +19,12 @@ class LoginPage extends BasePage {
         const tittleElement = await this.page.locator(this.loginTittle);
         return await tittleElement.textContent();
     }
-    async loginToSite(loginValue, passwordValue) {
-        await this.page.type(this.login, loginValue);
-        await this.page.type(this.password, passwordValue);
+    async loginToSite(login, password) {
+        await this.page.type(this.login, login);
+        await this.page.type(this.password, password);
         await this.page.click(this.loginButton);
         const actualValue = await this.userIsLogin();
-        expect(actualValue).toContain(loginValue);
+        expect(actualValue).toContain(login);
     }
 
 
