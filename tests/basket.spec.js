@@ -1,4 +1,4 @@
-const { test, expect, chromium} = require('@playwright/test');
+const {test, expect, chromium} = require('@playwright/test');
 const {allure} = require('allure-playwright')
 
 test.describe('basket testing', () => {
@@ -6,7 +6,7 @@ test.describe('basket testing', () => {
     let context;
     let page;
 
-    test.beforeEach(async ({},testInfo) => {
+    test.beforeEach(async ({}, testInfo) => {
         browser = await chromium.launch();
         context = await browser.newContext();
         page = await context.newPage();
@@ -18,14 +18,13 @@ test.describe('basket testing', () => {
         const basketCounter = await page.locator("//span[@class='basket-count-items badge badge-primary']").textContent();
         if (basketCounter === '0') {
             console.log('Basket is empty');
-        }
-        else {
+        } else {
             await page.locator("//a[@id='dropdownBasket']").click();
             const dropdownBasketIsOpened = await page.locator("//a[@class='btn btn-danger btn-sm mr-auto']").click();
             console.log('Basket is cleaned successfully');
         }
 
-        if (testInfo.title  ==='Add all items to basket and open it') {
+        if (testInfo.title === 'Add all items to basket and open it') {
             console.log("Special condition is triggered");
             //Add item with discount to basket
             const productsWithDiscount = await page.locator("//span[@class='product_discount']//ancestor::div[@class='note-item card h-100 hasDiscount']");
@@ -38,22 +37,22 @@ test.describe('basket testing', () => {
     });
     test.afterEach(async ({}, testInfo) => {
         if (testInfo.status === "failed") {
-            const screenshot = await page.screenshot({ fullPage: true });
+            const screenshot = await page.screenshot({fullPage: true});
             await allure.attachment('failed_screen', screenshot, 'image/png');
         }
         await browser.close();
-     });
+    });
     test('Check basket is opened', async () => {
-            //  Check dropdown is opened
-            await page.locator("//a[@id='dropdownBasket']").click();
-            const dropdownBasketIsOpened = page.locator("//div[@aria-labelledby='dropdownBasket']");
-            await expect(dropdownBasketIsOpened).toHaveClass('dropdown-menu dropdown-menu-right show');
-            //  Check basket is opened
-            await page.locator("//a[@class='btn btn-primary btn-sm ml-auto']").click();
-            const expectedBasketURL = 'https://enotes.pointschool.ru/basket';
-            await expect(page).toHaveURL(expectedBasketURL);
-            const errorState = await page.locator("//div[@class='site-error']");
-            await expect(errorState).toBeEmpty();
+        //  Check dropdown is opened
+        await page.locator("//a[@id='dropdownBasket']").click();
+        const dropdownBasketIsOpened = page.locator("//div[@aria-labelledby='dropdownBasket']");
+        await expect(dropdownBasketIsOpened).toHaveClass('dropdown-menu dropdown-menu-right show');
+        //  Check basket is opened
+        await page.locator("//a[@class='btn btn-primary btn-sm ml-auto']").click();
+        const expectedBasketURL = 'https://enotes.pointschool.ru/basket';
+        await expect(page).toHaveURL(expectedBasketURL);
+        const errorState = await page.locator("//div[@class='site-error']");
+        await expect(errorState).toBeEmpty();
     });
     test('Add first item without discount to basket and open it', async () => {
 
@@ -82,9 +81,8 @@ test.describe('basket testing', () => {
             await expect(page).toHaveURL(expectedBasketURL);
             const errorState = await page.locator("//div[@class='site-error']");
             await expect(errorState).toBeEmpty();
-        }
-        else {
-            console.log ('No items without discount were found');
+        } else {
+            console.log('No items without discount were found');
         }
     });
     test('Add first item with discount to basket and open it', async () => {
@@ -113,9 +111,8 @@ test.describe('basket testing', () => {
             await expect(page).toHaveURL(expectedBasketURL);
             const errorState = await page.locator("//div[@class='site-error']");
             await expect(errorState).toBeEmpty();
-        }
-        else {
-            console.log ('No items with discount were found');
+        } else {
+            console.log('No items with discount were found');
         }
     });
     test('Add all items to basket and open it', async () => {
@@ -156,15 +153,15 @@ test.describe('basket testing', () => {
     test('Add 9 items with discount to basket and open it', async () => {
 
         const productsWithDiscount = await page.locator("//span[@class='product_discount']//ancestor::div[@class='note-item card h-100 hasDiscount']");
-        console.log (await productsWithDiscount.all());
+        console.log(await productsWithDiscount.all());
         if ((await productsWithDiscount.all()).length > 0) {
             const buyButtonOfProductWithDiscount = await productsWithDiscount.locator("//button[@class='actionBuyProduct btn btn-primary mt-3']").nth(0);
-            for (let i = 0; i<9 ; i++) {
-                await page.waitForSelector(`//span[@class="basket-count-items badge badge-primary" and text()="${i}"]`, { timeout: 1000 });
+            for (let i = 0; i < 9; i++) {
+                await page.waitForSelector(`//span[@class="basket-count-items badge badge-primary" and text()="${i}"]`, {timeout: 1000});
                 await buyButtonOfProductWithDiscount.click();
                 console.log(`${i} interation(s)`);
             }
-            await page.waitForSelector(`//span[@class="basket-count-items badge badge-primary" and text()="9"]`, { timeout: 1000 });
+            await page.waitForSelector(`//span[@class="basket-count-items badge badge-primary" and text()="9"]`, {timeout: 1000});
             const basketCounter = await page.locator("//span[@class='basket-count-items badge badge-primary']").textContent();
             await expect(basketCounter).toMatch('9');
             console.log(`${basketCounter} item(s) with discount is located in basket`);
@@ -184,9 +181,8 @@ test.describe('basket testing', () => {
             await expect(page).toHaveURL(expectedBasketURL);
             const errorState = await page.locator("//div[@class='site-error']");
             await expect(errorState).toBeEmpty();
-        }
-        else {
-            console.log ('No items with discount were found')
+        } else {
+            console.log('No items with discount were found')
         }
     });
 });

@@ -1,33 +1,29 @@
-const { test, expect, chromium} = require('@playwright/test');
+const {test, expect, chromium} = require('@playwright/test');
 const {allure} = require('allure-playwright');
-const LoginPage = require('../pages/login.page');
-const User = require('../actors/User')
+const LoginPage  = require('../pages/login.page');
+const { HomePage } = require('../pages/home.page');
 
 
 test.describe('basket testing', () => {
     let browser;
     let context;
     let page;
-    let user;
+    let loginPage;
+    let homePage;
 
-    test.beforeEach(async ({},testInfo) => {
-        browser = await chromium.launch({headless:false});
+
+    test.beforeEach(async ({}, testInfo) => {
+        browser = await chromium.launch({headless: false});
         context = await browser.newContext();
         page = await context.newPage();
-        user = new User(page);
+        loginPage = new LoginPage(page);
+        homePage = new HomePage(page);
         //  Login
-        await user.login();
-        const basketCounter = await page.locator("//span[@class='basket-count-items badge badge-primary']").textContent();
-        if (basketCounter === '0') {
-            console.log('Basket is empty');
-        }
-        else {
-            await page.locator("//a[@id='dropdownBasket']").click();
-            const dropdownBasketIsOpened = await page.locator("//a[@class='btn btn-danger btn-sm mr-auto']").click();
-            console.log('Basket is cleaned successfully');
-        }
+        await loginPage.goToLoginPage();
+        await loginPage.loginToSite('test','test');
+        await homePage.basket.checkBasketCounterValueIsEmpty();
 
-        if (testInfo.title  ==='Add all items to basket and open it') {
+        if (testInfo.title === 'Add all items to basket and open it') {
             console.log("Special condition is triggered");
             //Add item with discount to basket
             const productsWithDiscount = await page.locator("//span[@class='product_discount']//ancestor::div[@class='note-item card h-100 hasDiscount']");
@@ -40,7 +36,7 @@ test.describe('basket testing', () => {
     });
     test.afterEach(async ({}, testInfo) => {
         if (testInfo.status === "failed") {
-            const screenshot = await page.screenshot({ fullPage: true });
+            const screenshot = await page.screenshot({fullPage: true});
             await allure.attachment('failed_screen', screenshot, 'image/png');
         }
         await browser.close();
