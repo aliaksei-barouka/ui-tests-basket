@@ -33,7 +33,7 @@ test.describe('basket testing', () => {
         await browser.close();
     });
     test.only('Check basket is opened new', async () => {
- await homePage.openBasketDropdownButton();
+        await homePage.openBasketDropdownButton();
         //  Check basket is opened
         await page.locator("//a[@class='btn btn-primary btn-sm ml-auto']").click();
         const expectedBasketURL = 'https://enotes.pointschool.ru/basket';

@@ -28,6 +28,7 @@ class Basket {
     async checkBasketCounterValue() {
         return await this.page.locator(this.basketCounter).textContent();
     }
+
     async checkBasketCounterValueIsEmpty() {
         const basketCounterValue = await this.checkBasketCounterValue();
         if (basketCounterValue === '0') {
