@@ -1,5 +1,6 @@
 const BasePage = require('./base.page');
 const Basket = require('../modules/Basket')
+const {expect} = require("@playwright/test");
 
 class HomePage extends BasePage {
     constructor(page) {
@@ -19,8 +20,8 @@ class HomePage extends BasePage {
     }
 
     async findAllItems() {
-        const items = await this.page.locator(this.allProducts);
-        if ((await items.all()).length > 0) {
+        const items = await this.page.locator(this.allProducts).all();
+        if (await items.length > 0) {
             return items;
         }
     }
@@ -43,32 +44,42 @@ class HomePage extends BasePage {
         const firstItemWithDiscount = await this.findFirstItemWithDiscount();
         const buyButton = await firstItemWithDiscount.locator(this.buyItemsButton);
         await buyButton.click();
+        const basketCounter = await this.basket.checkBasketCounterValue();
+        await expect(basketCounter).toMatch('1');
     }
 
     async buyFirstItemWithoutDiscount() {
         const firstItemWithoutDiscount = await this.findFirstItemWithoutDiscount();
         const buyButton = await firstItemWithoutDiscount.locator(this.buyItemsButton);
         await buyButton.click();
+        const basketCounter = await this.basket.checkBasketCounterValue();
+        await expect(basketCounter).toMatch('1');
     }
 
     async buyEachItemOneTime() {
         const allItems = await this.findAllItems();
+        console.log(allItems.length)
         for (let i = 0; i < allItems.length; i++) {
             const item = allItems[i];
-            const buyEachItemOneTime = await item.locator(this.buyItemsButton);
+            const buyEachItemOneTime = await item.locator(this.buyItemsButton).nth(0);
             await buyEachItemOneTime.click();
+            console.log(buyEachItemOneTime)
+            const basketCounter = await this.basket.checkBasketCounterValue();
+            await expect(basketCounter).toMatch('8');
         }
     }
 
     async buyFirstItemWithDiscountNineTimes() {
         const firstItemWithDiscount = await this.findFirstItemWithDiscount();
-        const basketCounter = await this.checkBasketCounterValue();
         for (let i = 0; i < 9; i++) {
-            await this.page.waitForSelector(basketCounter('${i}'), {timeout: 1000});
+            const selector = `//span[@class="basket-count-items badge badge-primary" and text()="${i}"]`;
+            await this.page.waitForSelector(selector, {timeout: 1000});
             const buyFirstItemWithDiscountNineTimes = await firstItemWithDiscount.locator(this.buyItemsButton);
             await buyFirstItemWithDiscountNineTimes.click();
         }
-        await this.page.waitForSelector(basketCounter('9'), {timeout: 1000});
+        await this.page.waitForSelector(`//span[@class="basket-count-items badge badge-primary" and text()="9"]`, {timeout: 1000});
+        const basketCounter = await this.basket.checkBasketCounterValue();
+        await expect(basketCounter).toMatch('9');
     }
 
 
