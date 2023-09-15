@@ -24,7 +24,7 @@ class LoginPage extends BasePage {
         await this.page.type(this.password, password);
         await this.page.click(this.loginButton);
         const actualValue = await this.userIsLogin();
-        expect(actualValue).toContain(login);
+        await expect(actualValue).toContain(login);
     }
 
 
