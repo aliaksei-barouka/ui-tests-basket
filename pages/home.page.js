@@ -1,6 +1,5 @@
 const BasePage = require('./base.page');
-const Basket = require('../modules/Basket')
-const {expect} = require("@playwright/test");
+const Basket = require('../modules/Basket');
 
 class HomePage extends BasePage {
     constructor(page) {
