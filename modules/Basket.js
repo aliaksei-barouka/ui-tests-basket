@@ -42,6 +42,8 @@ class Basket {
     async redirectToBasket() {
         const redirectToBasket = this.page.locator(this.redirectToBasketButton);
         await redirectToBasket.click();
+        const expectedBasketURL = 'https://enotes.pointschool.ru/basket';
+        await expect(this.page).toHaveURL(expectedBasketURL);
     }
 
     async findDropDownItemsName() {

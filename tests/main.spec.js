@@ -2,6 +2,7 @@ const {test, expect, chromium} = require('@playwright/test');
 const {allure} = require('allure-playwright');
 const LoginPage = require('../pages/login.page');
 const {HomePage} = require('../pages/home.page');
+const BasketPage = require('../pages/basket.page');
 
 
 test.describe('basket testing', () => {
@@ -10,6 +11,7 @@ test.describe('basket testing', () => {
     let page;
     let loginPage;
     let homePage;
+    let basketPage;
 
 
     test.beforeEach(async ({}, testInfo) => {
@@ -18,6 +20,7 @@ test.describe('basket testing', () => {
         page = await context.newPage();
         loginPage = new LoginPage(page);
         homePage = new HomePage(page);
+        basketPage = new BasketPage(page);
         await loginPage.goToLoginPage();
         await loginPage.loginToSite('test', 'test');
         await homePage.basket.checkBasketCounterValueIsEmpty();
@@ -47,10 +50,7 @@ test.describe('basket testing', () => {
         await homePage.basket.openBasketDropdown();
         await homePage.basket.checkDropDownItemsHaveAllAttributes();
         await homePage.basket.redirectToBasket();
-        const expectedBasketURL = 'https://enotes.pointschool.ru/basket';
-        await expect(page).toHaveURL(expectedBasketURL);
-        const errorState = await page.locator("//div[@class='site-error']");
-        await expect(errorState).toBeEmpty();
+        await basketPage.checkPageError();
 
     });
     test('Add first item with discount to basket and open it', async () => {
@@ -60,10 +60,7 @@ test.describe('basket testing', () => {
         await homePage.basket.openBasketDropdown();
         await homePage.basket.checkDropDownItemsHaveAllAttributes();
         await homePage.basket.redirectToBasket();
-        const expectedBasketURL = 'https://enotes.pointschool.ru/basket';
-        await expect(page).toHaveURL(expectedBasketURL);
-        const errorState = await page.locator("//div[@class='site-error']");
-        await expect(errorState).toBeEmpty();
+        await basketPage.checkPageError();
     });
     test('Add all items to basket and open it', async () => {
         await homePage.buyEachItemOneTime();
@@ -71,11 +68,8 @@ test.describe('basket testing', () => {
         await expect(basketCounterValue).toMatch('9');
         await homePage.basket.openBasketDropdown();
         await homePage.basket.checkAllDropDownItemsHaveAllAttributes();
-        await homePage.basket.redirectToBasket()
-        const expectedBasketURL = 'https://enotes.pointschool.ru/basket';
-        await expect(page).toHaveURL(expectedBasketURL);
-        const errorState = await page.locator("//div[@class='site-error']");
-        await expect(errorState).toBeEmpty();
+        await homePage.basket.redirectToBasket();
+        await basketPage.checkPageError();
     });
     test('Add 9 same items with discount to basket and open it', async () => {
         await homePage.buyFirstItemWithDiscountNineTimes();
@@ -84,11 +78,7 @@ test.describe('basket testing', () => {
         await homePage.basket.openBasketDropdown()
         await homePage.basket.checkDropDownItemsHaveAllAttributes();
         await homePage.basket.redirectToBasket();
-        const expectedBasketURL = 'https://enotes.pointschool.ru/basket';
-        await expect(page).toHaveURL(expectedBasketURL);
-        const errorState = await page.locator("//div[@class='site-error']");
-        await expect(errorState).toBeEmpty();
-
+        await basketPage.checkPageError();
     });
 
 });
