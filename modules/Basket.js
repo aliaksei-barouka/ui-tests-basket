@@ -31,12 +31,6 @@ class Basket {
     async checkBasketCounterValue() {
         return await this.page.locator(this.basketCounter).textContent();
     }
-
-    async redirectToBasket() {
-        const redirectToBasket = this.page.locator(this.redirectToBasketButton);
-        await redirectToBasket.click();
-    }
-
     async checkBasketCounterValueIsEmpty() {
         const basketCounterValue = await this.checkBasketCounterValue();
         if (basketCounterValue === '0') {
@@ -44,6 +38,10 @@ class Basket {
             await this.openBasketDropdown();
             await this.triggerClearItemsButton();
         }
+    }
+    async redirectToBasket() {
+        const redirectToBasket = this.page.locator(this.redirectToBasketButton);
+        await redirectToBasket.click();
     }
 
     async findDropDownItemsName() {

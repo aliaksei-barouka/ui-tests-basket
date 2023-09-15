@@ -42,6 +42,8 @@ test.describe('basket testing', () => {
     });
     test('Add first item without discount to basket and open it', async () => {
         await homePage.buyFirstItemWithoutDiscount()
+        const basketCounterValue = await homePage.basket.checkBasketCounterValue();
+        await expect(basketCounterValue).toMatch('1');
         await homePage.basket.openBasketDropdown();
         await homePage.basket.checkDropDownItemsHaveAllAttributes();
         await homePage.basket.redirectToBasket();
@@ -53,6 +55,8 @@ test.describe('basket testing', () => {
     });
     test('Add first item with discount to basket and open it', async () => {
         await homePage.buyFirstItemWithDiscount();
+        const basketCounterValue = await homePage.basket.checkBasketCounterValue();
+        await expect(basketCounterValue).toMatch('1');
         await homePage.basket.openBasketDropdown();
         await homePage.basket.checkDropDownItemsHaveAllAttributes();
         await homePage.basket.redirectToBasket();
@@ -63,6 +67,8 @@ test.describe('basket testing', () => {
     });
     test('Add all items to basket and open it', async () => {
         await homePage.buyEachItemOneTime();
+        const basketCounterValue = await homePage.basket.checkBasketCounterValue();
+        await expect(basketCounterValue).toMatch('9');
         await homePage.basket.openBasketDropdown();
         await homePage.basket.checkAllDropDownItemsHaveAllAttributes();
         await homePage.basket.redirectToBasket()
@@ -73,6 +79,8 @@ test.describe('basket testing', () => {
     });
     test('Add 9 same items with discount to basket and open it', async () => {
         await homePage.buyFirstItemWithDiscountNineTimes();
+        const basketCounterValue = await homePage.basket.checkBasketCounterValue();
+        await expect(basketCounterValue).toMatch('9');
         await homePage.basket.openBasketDropdown()
         await homePage.basket.checkDropDownItemsHaveAllAttributes();
         await homePage.basket.redirectToBasket();
@@ -82,6 +90,5 @@ test.describe('basket testing', () => {
         await expect(errorState).toBeEmpty();
 
     });
-
 
 });
