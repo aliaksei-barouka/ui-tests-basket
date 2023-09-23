@@ -2,8 +2,8 @@
   "name": "untitled",
   "version": "1.0.0",
   "devDependencies": {
-    "@playwright/test": "^1.37.1",
-    "allure-playwright": "^2.7.0",
+    "@playwright/test": "^1.38.1",
+    "allure-playwright": "^2.8.1",
     "mkdirp": "^3.0.1",
     "rimraf": "^5.0.1"
   },
