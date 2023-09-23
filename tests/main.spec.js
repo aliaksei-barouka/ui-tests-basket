@@ -1,13 +1,14 @@
+
 const {test, expect, chromium} = require('@playwright/test');
 const {allure} = require('allure-playwright');
 const LoginPage = require('../pages/login.page');
 const {HomePage} = require('../pages/home.page');
 const BasketPage = require('../pages/basket.page');
+const Browser = require('../src/Browser');
 
 
 test.describe('basket testing', () => {
     let browser;
-    let context;
     let page;
     let loginPage;
     let homePage;
@@ -15,9 +16,9 @@ test.describe('basket testing', () => {
 
 
     test.beforeEach(async ({}, testInfo) => {
-        browser = await chromium.launch();
-        context = await browser.newContext();
-        page = await context.newPage();
+        browser = new Browser(page);
+        await browser.initialize();
+        page = browser.page;
         loginPage = new LoginPage(page);
         homePage = new HomePage(page);
         basketPage = new BasketPage(page);
@@ -33,6 +34,7 @@ test.describe('basket testing', () => {
             const screenshot = await page.screenshot({fullPage: true});
             await allure.attachment('failed_screen', screenshot, 'image/png');
         }
+        const browser = new Browser();
         await browser.close();
     });
     test('Check basket is opened', async () => {
@@ -43,7 +45,7 @@ test.describe('basket testing', () => {
         const errorState = await page.locator("//div[@class='site-error']");
         await expect(errorState).toBeEmpty();
     });
-    test('Add first item without discount to basket and open it', async () => {
+    test.only('Add first item without discount to basket and open it', async () => {
         await homePage.buyFirstItemWithoutDiscount()
         const basketCounterValue = await homePage.basket.checkBasketCounterValue();
         await expect(basketCounterValue).toMatch('1');
