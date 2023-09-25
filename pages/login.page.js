@@ -13,17 +13,17 @@ class LoginPage extends BasePage {
     }
 
     async goToLoginPage() {
-        await super.navigate("login");
+        await super.navigateTo("login");
     }
-    async userIsLogin(){
-        const tittleElement = await this.page.locator(this.loginTittle);
-        return await tittleElement.textContent();
+    async getUsername(){
+        const titleElement = await this.page.locator(this.loginTittle);
+        return await titleElement.textContent();
     }
-    async loginToSite(login, password) {
+    async loginUser(login, password) {
         await this.page.type(this.login, login);
         await this.page.type(this.password, password);
         await this.page.click(this.loginButton);
-        const actualValue = await this.userIsLogin();
+        const actualValue = await this.getUsername();
         await expect(actualValue).toContain(login);
     }
 

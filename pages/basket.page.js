@@ -11,12 +11,12 @@ class BasketPage extends BasePage {
     }
 
     async goToBasketPage() {
-        await super.navigate("basket");
+        await super.navigateTo("basket");
     }
 
-    async checkPageError() {
-        const errorState = this.page.locator(this.siteError);
-        await expect(errorState).toBeEmpty();
+    async checkPageErrorNotExists() {
+        const error = this.page.locator(this.siteError);
+        await expect(error).toBeEmpty();
     }
 }
 module.exports = BasketPage;

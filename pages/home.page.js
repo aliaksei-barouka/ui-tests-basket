@@ -15,24 +15,24 @@ class HomePage extends BasePage {
     }
 
     async goToHomePage() {
-        await super.navigate("");
+        await super.navigateTo("");
     }
 
-    async findAllItems() {
+    async getAllItems() {
         const items = await this.page.locator(this.allProducts);
         if ((await items.all()).length > 0) {
             return items;
         }
     }
 
-    async findFirstItemWithDiscount() {
+    async getFirstItemWithDiscount() {
         const itemsWithDiscount = await this.page.locator(this.allProducts).locator(this.productsWithDiscount);
         if ((await itemsWithDiscount.all()).length > 0) {
             return itemsWithDiscount.nth(0);
         }
     }
 
-    async findFirstItemWithoutDiscount() {
+    async getFirstItemWithoutDiscount() {
         const itemsWithoutDiscount = await this.page.locator(this.allProducts).locator(this.productsWithoutDiscount);
         if ((await itemsWithoutDiscount.all()).length > 0) {
             return itemsWithoutDiscount.nth(0);
@@ -40,20 +40,19 @@ class HomePage extends BasePage {
     }
 
     async buyFirstItemWithDiscount() {
-        const firstItemWithDiscount = await this.findFirstItemWithDiscount();
+        const firstItemWithDiscount = await this.getFirstItemWithDiscount();
         const buyButton = await firstItemWithDiscount.locator(this.buyItemsButton);
         await buyButton.click();
     }
 
     async buyFirstItemWithoutDiscount() {
-        const firstItemWithoutDiscount = await this.findFirstItemWithoutDiscount();
+        const firstItemWithoutDiscount = await this.getFirstItemWithoutDiscount();
         const buyButton = await firstItemWithoutDiscount.locator(this.buyItemsButton);
         await buyButton.click();
     }
 
     async buyEachItemOneTime() {
-        const items = await this.findAllItems();
-        const allItems = await items.all();
+        const allItems = (await this.getAllItems()).all();
         for (let i = 0; i < allItems.length; i++) {
             const selector = `//span[@class="basket-count-items badge badge-primary" and text()="${i + 1}"]`;
             await this.page.waitForSelector(selector, {timeout: 1000});
@@ -64,15 +63,15 @@ class HomePage extends BasePage {
         await this.page.waitForSelector(`//span[@class="basket-count-items badge badge-primary" and text()="9"]`, {timeout: 1000});
     }
 
-    async buyFirstItemWithDiscountNineTimes() {
-        const firstItemWithDiscount = await this.findFirstItemWithDiscount();
-        for (let i = 0; i < 9; i++) {
+    async buyFirstItemWithDiscountMultipleTimes(buyCounter) {
+        const firstItemWithDiscount = await this.getFirstItemWithDiscount();
+        for (let i = 0; i < buyCounter; i++) {
             const selector = `//span[@class="basket-count-items badge badge-primary" and text()="${i}"]`;
             await this.page.waitForSelector(selector, {timeout: 1000});
             const buyFirstItemWithDiscountNineTimes = await firstItemWithDiscount.locator(this.buyItemsButton);
             await buyFirstItemWithDiscountNineTimes.click();
         }
-        await this.page.waitForSelector(`//span[@class="basket-count-items badge badge-primary" and text()="9"]`, {timeout: 1000});
+        await this.page.waitForSelector(`//span[@class="basket-count-items badge badge-primary" and text()="${buyCounter}"]`, {timeout: 1000});
     }
 
 

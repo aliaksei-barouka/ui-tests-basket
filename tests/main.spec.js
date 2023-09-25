@@ -23,8 +23,8 @@ test.describe('basket testing', () => {
         homePage = new HomePage(page);
         basketPage = new BasketPage(page);
         await loginPage.goToLoginPage();
-        await loginPage.loginToSite('test', 'test');
-        await homePage.basket.checkBasketCounterValueIsEmpty();
+        await loginPage.loginUser('test', 'test');
+        await homePage.basket.emptyBasket();
         if (testInfo.title === 'Add all items to basket and open it') {
             await homePage.buyFirstItemWithDiscount();
         }
@@ -34,53 +34,49 @@ test.describe('basket testing', () => {
             const screenshot = await page.screenshot({fullPage: true});
             await allure.attachment('failed_screen', screenshot, 'image/png');
         }
-        const browser = new Browser();
-        await browser.close();
+        await browser.close()
     });
     test('Check basket is opened', async () => {
         await homePage.basket.openBasketDropdown();
-        await homePage.basket.redirectToBasket();
-        const expectedBasketURL = 'https://enotes.pointschool.ru/basket';
-        await expect(page).toHaveURL(expectedBasketURL);
-        const errorState = await page.locator("//div[@class='site-error']");
-        await expect(errorState).toBeEmpty();
+        await homePage.basket.goToBasket();
+        await basketPage.checkPageErrorNotExists();
     });
-    test.only('Add first item without discount to basket and open it', async () => {
+    test('Add first item W/O discount to basket and open it', async () => {
         await homePage.buyFirstItemWithoutDiscount()
-        const basketCounterValue = await homePage.basket.checkBasketCounterValue();
+        const basketCounterValue = await homePage.basket.getBasketCounterValue();
         await expect(basketCounterValue).toMatch('1');
         await homePage.basket.openBasketDropdown();
-        await homePage.basket.checkDropDownItemsHaveAllAttributes();
-        await homePage.basket.redirectToBasket();
-        await basketPage.checkPageError();
+        await homePage.basket.checkThatDropDownItemsHaveAllAttributes();
+        await homePage.basket.goToBasket();
+        await basketPage.checkPageErrorNotExists();
 
     });
     test('Add first item with discount to basket and open it', async () => {
         await homePage.buyFirstItemWithDiscount();
-        const basketCounterValue = await homePage.basket.checkBasketCounterValue();
+        const basketCounterValue = await homePage.basket.getBasketCounterValue();
         await expect(basketCounterValue).toMatch('1');
         await homePage.basket.openBasketDropdown();
-        await homePage.basket.checkDropDownItemsHaveAllAttributes();
-        await homePage.basket.redirectToBasket();
-        await basketPage.checkPageError();
+        await homePage.basket.checkThatDropDownItemsHaveAllAttributes();
+        await homePage.basket.goToBasket();
+        await basketPage.checkPageErrorNotExists();
     });
     test('Add all items to basket and open it', async () => {
         await homePage.buyEachItemOneTime();
-        const basketCounterValue = await homePage.basket.checkBasketCounterValue();
+        const basketCounterValue = await homePage.basket.getBasketCounterValue();
         await expect(basketCounterValue).toMatch('9');
         await homePage.basket.openBasketDropdown();
         await homePage.basket.checkAllDropDownItemsHaveAllAttributes();
-        await homePage.basket.redirectToBasket();
-        await basketPage.checkPageError();
+        await homePage.basket.goToBasket();
+        await basketPage.checkPageErrorNotExists();
     });
     test('Add 9 same items with discount to basket and open it', async () => {
-        await homePage.buyFirstItemWithDiscountNineTimes();
-        const basketCounterValue = await homePage.basket.checkBasketCounterValue();
+        await homePage.buyFirstItemWithDiscountMultipleTimes(9);
+        const basketCounterValue = await homePage.basket.getBasketCounterValue();
         await expect(basketCounterValue).toMatch('9');
         await homePage.basket.openBasketDropdown()
-        await homePage.basket.checkDropDownItemsHaveAllAttributes();
-        await homePage.basket.redirectToBasket();
-        await basketPage.checkPageError();
+        await homePage.basket.checkThatDropDownItemsHaveAllAttributes();
+        await homePage.basket.goToBasket();
+        await basketPage.checkPageErrorNotExists();
     });
 
 });

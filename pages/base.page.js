@@ -3,7 +3,7 @@ class BasePage {
         this.page = page;
     }
 
-    async navigate(path) {
+    async navigateTo(path) {
         await this.page.goto("https://enotes.pointschool.ru/" + path);
     }
 }
