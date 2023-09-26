@@ -31,6 +31,7 @@ class Basket {
     async getBasketCounterValue() {
         return await this.page.locator(this.basketCounter).textContent();
     }
+
     async emptyBasket() {
         const basketCounterValue = await this.getBasketCounterValue();
         if (basketCounterValue === '0') {
@@ -39,6 +40,7 @@ class Basket {
             await this.clickClearItemsButton();
         }
     }
+
     async goToBasket() {
         const goToBasketButton = this.page.locator(this.goToBasketButton);
         await goToBasketButton.click();
@@ -48,45 +50,38 @@ class Basket {
 
     async getDropDownItemsNames() {
         const dropDownItemsNames = await this.page.locator(this.basketDropDownItems).locator(this.basketItemsName);
-        await dropDownItemsNames.textContent();
+        return await dropDownItemsNames;
     }
 
     async getDropDownItemsPrices() {
         const dropDownItemsPrices = await this.page.locator(this.basketDropDownItems).locator(this.basketItemsPrice);
-        await dropDownItemsPrices.textContent();
+        return await dropDownItemsPrices;
     }
 
     async getTotalPriceValue() {
         const totalPrice = await this.page.locator(this.basketTotalPrice);
-        await totalPrice.textContent();
+        return await totalPrice;
     }
 
     async checkThatDropDownItemsHaveAllAttributes() {
-        await this.getDropDownItemsNames();
-        await this.getDropDownItemsPrices();
-        await this.getTotalPriceValue();
-        //TODO: Check that checks below are working correctly
-        await expect(this.getDropDownItemsNames()).toBeTruthy 
-        && await expect(this.getDropDownItemsPrices()).toBeTruthy
-        && await expect(this.getTotalPriceValue()).toBeTruthy
-    }
+        const names = await (await this.getDropDownItemsNames()).all();
+        const prices = await (await this.getDropDownItemsPrices()).all();
+        const totalPrice = await (await this.getTotalPriceValue()).all();
 
-    async checkAllDropDownItemsHaveAllAttributes() {
-        await this.getDropDownItemsNames();
-        await this.getDropDownItemsPrices();
-        await this.getTotalPriceValue();
+        for (const name of names) {
+            const textName = await name.textContent();
+            await expect(textName).toBeTruthy();
+        }
 
-        (await this.getDropDownItemsNames()).forEach(
-            await expect(this.getDropDownItemsNames().nth()).toBeTruthy()
-            && await expect(this.getDropDownItemsNames().nth()).toBeTruthy()
-        )
+        for (const price of prices) {
+            const textPrice = await price.textContent();
+            await expect(textPrice).toBeTruthy();
+        }
 
-        (await this.getDropDownItemsPrices()).forEach(
-            await expect(this.getDropDownItemsPrices().nth()).toBeTruthy()
-            && await expect(this.getDropDownItemsPrices().nth()).toBeTruthy()
-        )
-
-        await expect(this.getTotalPriceValue()).toBeTruthy();
+        for (const price of totalPrice) {
+            const textPrice = await price.textContent();
+            await expect(textPrice).toBeTruthy();
+        }
     }
 
 

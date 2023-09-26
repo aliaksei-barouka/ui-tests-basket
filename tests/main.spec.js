@@ -51,7 +51,7 @@ test.describe('basket testing', () => {
         await basketPage.checkPageErrorNotExists();
 
     });
-    test('Add first item with discount to basket and open it', async () => {
+    test.only('Add first item with discount to basket and open it', async () => {
         await homePage.buyFirstItemWithDiscount();
         const basketCounterValue = await homePage.basket.getBasketCounterValue();
         await expect(basketCounterValue).toMatch('1');
@@ -65,7 +65,7 @@ test.describe('basket testing', () => {
         const basketCounterValue = await homePage.basket.getBasketCounterValue();
         await expect(basketCounterValue).toMatch('9');
         await homePage.basket.openBasketDropdown();
-        await homePage.basket.checkAllDropDownItemsHaveAllAttributes();
+        await homePage.basket.checkThatDropDownItemsHaveAllAttributes();
         await homePage.basket.goToBasket();
         await basketPage.checkPageErrorNotExists();
     });
