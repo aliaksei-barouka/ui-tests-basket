@@ -11,7 +11,7 @@ class Basket {
         this.basketItemsName = "//span[@class='basket-item-title']";
         this.basketItemsPrice = "//span[@class='basket-item-price']";
         this.basketTotalPrice = "//span[@class='basket_price']";
-        this.redirectToBasketButton = "//a[@class='btn btn-primary btn-sm ml-auto']"
+        this.goToBasketButton = "//a[@class='btn btn-primary btn-sm ml-auto']"
         this.clearItemsButton = "//a[@class='btn btn-danger btn-sm mr-auto']";
 
     }
@@ -19,67 +19,69 @@ class Basket {
     async openBasketDropdown() {
         const basketDropdownElement = this.page.locator(this.basketDropdownButton);
         await basketDropdownElement.click();
-        const ariaExpanded = await basketDropdownElement.getAttribute('aria-expanded');
-        await expect(ariaExpanded).toBe('true');
+        const areaExpanded = await basketDropdownElement.getAttribute('aria-expanded');
+        await expect(areaExpanded).toBe('true');
     }
 
-    async triggerClearItemsButton() {
+    async clickClearItemsButton() {
         const clearItemsButtonElement = this.page.locator(this.clearItemsButton);
         await clearItemsButtonElement.click();
     }
 
-    async checkBasketCounterValue() {
+    async getBasketCounterValue() {
         return await this.page.locator(this.basketCounter).textContent();
     }
-    async checkBasketCounterValueIsEmpty() {
-        const basketCounterValue = await this.checkBasketCounterValue();
+
+    async emptyBasket() {
+        const basketCounterValue = await this.getBasketCounterValue();
         if (basketCounterValue === '0') {
         } else {
             await this.openBasketDropdown();
-            await this.triggerClearItemsButton();
+            await this.clickClearItemsButton();
         }
     }
-    async redirectToBasket() {
-        const redirectToBasket = this.page.locator(this.redirectToBasketButton);
-        await redirectToBasket.click();
+
+    async goToBasket() {
+        const goToBasketButton = this.page.locator(this.goToBasketButton);
+        await goToBasketButton.click();
         const expectedBasketURL = 'https://enotes.pointschool.ru/basket';
         await expect(this.page).toHaveURL(expectedBasketURL);
     }
 
-    async findDropDownItemsName() {
-        const findDropDownItemsName = await this.page.locator(this.basketDropDownItems).locator(this.basketItemsName);
-        await findDropDownItemsName.textContent();
+    async getDropDownItemsNames() {
+        const dropDownItemsNames = await this.page.locator(this.basketDropDownItems).locator(this.basketItemsName);
+        return await dropDownItemsNames;
     }
 
-    async findDropDownItemsPrice() {
-        const findDropDownItemsPrice = await this.page.locator(this.basketDropDownItems).locator(this.basketItemsPrice);
-        await findDropDownItemsPrice.textContent();
+    async getDropDownItemsPrices() {
+        const dropDownItemsPrices = await this.page.locator(this.basketDropDownItems).locator(this.basketItemsPrice);
+        return await dropDownItemsPrices;
     }
 
-    async findTotalPrice() {
-        const findTotalPrice = await this.page.locator(this.basketTotalPrice);
-        await findTotalPrice.textContent();
+    async getTotalPriceValue() {
+        const totalPrice = await this.page.locator(this.basketTotalPrice);
+        return await totalPrice;
     }
 
-    async checkDropDownItemsHaveAllAttributes() {
-        await this.findDropDownItemsName();
-        await this.findDropDownItemsPrice();
-        await this.findTotalPrice();
-        await expect(this.findDropDownItemsName()).toBeTruthy && await expect(this.findDropDownItemsPrice()).toBeTruthy
-        && await expect(this.findTotalPrice()).toBeTruthy
-    }
+    async checkThatDropDownItemsHaveAllAttributes() {
+        const names = await (await this.getDropDownItemsNames()).all();
+        const prices = await (await this.getDropDownItemsPrices()).all();
+        const totalPrice = await (await this.getTotalPriceValue()).all();
 
-    async checkAllDropDownItemsHaveAllAttributes() {
-        await this.findDropDownItemsName();
-        await this.findDropDownItemsPrice();
-        await this.findTotalPrice();
-        for (let i = 0; i < this.findDropDownItemsName().length; i++) {
-            await expect(this.findDropDownItemsName().nth(i)).toBeTruthy() && await expect(this.findDropDownItemsName().nth(i)).toBeTruthy();
+        for (const name of names) {
+            const textName = await name.textContent();
+            await expect(textName).toBeTruthy();
         }
-        for (let i = 0; i < this.findDropDownItemsPrice().length; i++) {
-            await expect(this.findDropDownItemsPrice().nth(i)).toBeTruthy() && await expect(this.findDropDownItemsPrice().nth(i)).toBeTruthy();
+
+        for (const price of prices) {
+            const textPrice = await price.textContent();
+            await expect(textPrice).toBeTruthy();
         }
-        await expect(this.findTotalPrice()).toBeTruthy();
+
+        for (const price of totalPrice) {
+            const textPrice = await price.textContent();
+            await expect(textPrice).toBeTruthy();
+        }
     }
 
 
